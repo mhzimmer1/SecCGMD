@@ -63,9 +63,12 @@ module sys_param
     double precision :: riboCenter(NDIM) = (/riboX, riboY, riboZ/)
     double precision, parameter :: riboR = 2.0 ! Radius of the ribosome
     ! Related to the solvation
-    double precision :: LEFTCUT=-3.55, RIGHTCUT=3.55,  & ! *** IN THIS VERSION NOT PARAMETERS BUT INPUTS
-                       MBL=-1.55, MBR=1.55, CUTB=0.25,    & ! Parameters in switch function
-                       rChannel=1.81 ! Radius of the channel, used for determining if beads are in the channel too
+    double precision :: LEFTCUT=-4.0, RIGHTCUT=4.0,  & ! *** IN THIS VERSION NOT PARAMETERS BUT INPUTS
+                       MBL=-2.0, MBR=2.0, CUTB=0.25,    & ! Parameters in switch function
+                       rChannel=1.5 ! Radius of the channel, used for determining if beads are in the channel too
+  !  double precision, parameter :: LEFTCUT=-4.0, RIGHTCUT=4.0,  & ! Cutoffs for solvation potential
+  !                     MBL=-2.0, MBR=2.0, CUTB=0.25,    & ! Parameters in switch function
+  !                     rChannel=1.5 ! Radius of the channel, used for determining if beads are in the channel too
     integer, parameter :: NGRID = 8000 ! Number of gridpoints used for the tabulated tanh function
     ! Related to the geometry of the SecY channel, for more information also check the .ppt files I have on this
     integer :: nBeadChan=48 ! Number of beads in the channel

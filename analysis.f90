@@ -14,7 +14,7 @@ module analysis
     double precision, parameter :: integrateD2=100.0 ! TM beads at least 10 sigma from channel center
     double precision :: fixForce(NDIM)
     integer(8) :: nfbin=20001, fhist(20001)
-    double precision :: bs=0.02d0, f0=-200.d0
+    double precision :: bs=0.01d0, f0=-100.d0
 
     contains
 

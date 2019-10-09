@@ -113,7 +113,6 @@ program main
             call write_LGstatus() ! iolib.f90
     endif
 
-    nFree = nBeads ! Translation is done and all beads are now free
     nForce = nBeads ! All beads are also included in the force calculation now
 
 !===================================================================================

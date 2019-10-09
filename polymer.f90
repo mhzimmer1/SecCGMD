@@ -82,11 +82,10 @@ module polymer
         err_read = 1
         open(unit=77,file=trim(localizationFile),iostat=err)
         if (err .eq. 0) then
-            read(77,*, iostat=err_read) nres
+            read(77,*, iostat=err_read) nres ! First line has restraint number
         endif
 
         if (err_read .eq. 0) then
-            read(77,*) nres ! First line has the number of restraints
             do n=1,nres
                 read(77,*,iostat=err) ib, resForceI, resForceE ! bead, intracellular restraint, extracellular restraint
                 if (err/=0) then

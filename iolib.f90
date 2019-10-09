@@ -447,9 +447,11 @@ module iolib
         do i=1,nBeads
                 write(77,'(3F12.4)') pos(i,x), pos(i,y), pos(i,z), bip(i)
         enddo
+!        write(77,*) ' '! Comment this out for normal usage
         close(77)
         ! Finally copy the temp file to overwrite the actual checkpoint
         command = "cp checkpoint.temp " // trim(checkOutFile)
+        !command = "cat checkpoint.temp >> " // trim(checkOutFile)
         call system(command)
 
     end subroutine write_checkpoint

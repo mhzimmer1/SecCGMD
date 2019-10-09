@@ -2,5 +2,6 @@ This version can be used to calculate the stop-transfer efficiency of a hydropho
 Sequence Files now contains:
     two columns for closed lambda and open lambda
     one extra column to define TM
-don't need to build repulsive tables or calculate bonds -- this is commented out 
 
+Changelog
+20181023: Changed lateral gating to only evaluate the energy if the random number drawn could possible lead to changing conformation

@@ -22,11 +22,16 @@ module channel
 
         implicit none
         double precision, intent(in) :: r(:,:) ! polymer chain positions
-        double precision :: dG ! The change in free energy for opening the LG
-        dG = DGEMPTY ! Initialize ! Empty Channel value
-        call LGenergy(r,dG,nBeads) ! Add a contribution due to polymer - translocon interaction energy
-        call LGsolv(r,dG,nBeads) !solvation change due to channel conf. change
-        call LGopen(dG) ! Evolve the LG status
+        double precision :: dG, ranNum, maxP ! The change in free energy for opening the LG, a random number, and the maximum possible probability of changing gate state
+
+        call Random_Number(ranNum) ! Need a random number for this stochastic opening/closing
+        maxP = dt*LGfricti
+        if (ranNum < maxP) then
+            dG = DGEMPTY ! Initialize ! Empty Channel value
+            call LGenergy(r,dG,nBeads) ! Add a contribution due to polymer - translocon interaction energy
+            call LGsolv(r,dG,nBeads) !solvation change due to channel conf. change
+            call LGopen(dG, ranNum) ! Evolve the LG status
+        endif        
 
     end subroutine LG_dynamics  
 
@@ -151,14 +156,13 @@ module channel
 ! LGstatus if an opening or closing event takes place.
 !=========================================================================================
 
-    subroutine LGopen(dG)
+    subroutine LGopen(dG, ranNum)
 
     implicit none
-    double precision, intent(in) :: dG ! dG for opening
-    double precision :: prob, changeP, ranNum ! weight of open, chance of change, random number
+    double precision, intent(in) :: dG, ranNum! dG for opening, random number
+    double precision :: prob, changeP ! weight of open, chance of change
 
     prob = exp(-dG/kBT)
-    call Random_Number(ranNum) ! Need a random number for this stochastic opening/closing
     random_count = random_count + 1
     if (LGstatus.eq.0) then ! LG is currently closed, evaluate if it should open
         changeP = dt*LGfricti*prob/(1+prob)

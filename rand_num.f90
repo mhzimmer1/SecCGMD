@@ -22,7 +22,7 @@ module rand_num
         call SYSTEM_CLOCK(COUNT=clock)
 
         clock = clock + extraRanSeed*100
-        seed = clock + 37 * (/ (i - 1, i = 1, seed_size) /)
+        seed = clock + 37 * (/ (i - 1, i = 1, seed_size) /) ! Change 12 to clock if you want to go back to random!!!
         ! if I submit many jobs really fast, they might all have the
         ! same time. That's why we need the extraRanSeed from the input
 
