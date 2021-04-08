@@ -1,5 +1,5 @@
-FC = ifort
-EXE = sec3D.central
+FC = gfortran
+EXE = sec3D
 FLAGS = -O3
 MAIN = main.f90
 SOURCES = sys_param.f90 rand_num.f90 iolib.f90 polymer.f90 forceField.f90 channel.f90 integrator.f90 analysis.f90

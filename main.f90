@@ -3,8 +3,6 @@
 ! modules and call them in the correct order.
 !
 
-!remove all force_pulling part
-
 program main
 
 !===================================================================================
@@ -56,6 +54,7 @@ program main
     call init_analysis()    ! Pre-create output variables for analysis, analysis.f90
     call init_ff()      ! Set some of the ff parameters, forcefield.f90
     write(6,*) 'Done initializing'
+    write(6,*) pulling_write_frequency
 
         ! Check if this is a restart
         if (restart/=0) call read_checkpoint(pos(:,:),it,bipBinding(:)) ! iolib.f90
@@ -124,7 +123,6 @@ program main
 write(6,*) 'Translation has finished, continuing dynamics of the free polymer chain'
     do ! Exit conditions are user defined see, read_user_input() in iolib.f90
         ! More steps can be added here
-        force = 0.0
    !     bondStatus = 0
         force = 0.0
         call calc_forces(pos(1:nForce,1:NDIM),force(1:nForce,1:NDIM))       
@@ -148,6 +146,10 @@ write(6,*) 'Translation has finished, continuing dynamics of the free polymer ch
                 call write_force(ftmp)
             endif
         endif
+        if (modulo(it,pulling_write_frequency).lt.1e-5  .and. ForcePulling.eq.1) then
+                call write_pulling_trajF(pos(1:nBeads,1:NDIM),force(1:nBeads,1:NDIM),aname(1:nBeads))   ! Write out the current positions, iolib.f90
+                call write_pulling_LGstatus() ! Write the current status of the lateral gate, iolib.f90
+            endif
         if (modulo(it,checkpoint_frequency).lt.1e-5) then
             call write_checkpoint(pos,it,bipBinding) ! iolib.f90, for restarts
         endif

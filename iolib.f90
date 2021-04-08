@@ -11,6 +11,7 @@ module iolib
     ! if the user provides alternate filenames these defaults will be
     ! overwritten
     character(250) ::   trajFile='traj.xyz',    &! File used to store the trajectory
+                pulling_trajFile='pulling_traj.xyz', &
                 confInFile='conf0.xyz', &! File with the input coordinates
                 confOutFile='conf1.xyz',&! File for output coordinates
                 seqInFile='seq.txt',    &! File with the bead properties (name, hydrophobicity)
@@ -20,7 +21,7 @@ module iolib
                 pairwiseFile='pairwise.txt', &    ! File with pairwise interactions between beads
                 localizationFile='localization.txt'    ! File with localization restraints for beads
     ! Next default parameters concerning the number of steps and the write frequency
-    integer :: nsteps=1000, write_frequency=100, checkpoint_frequency=1000,    &! How many iterations and how often write coords
+    integer :: nsteps=1000, write_frequency=100, pulling_write_frequency=100, checkpoint_frequency=1000,    &! How many iterations and how often write coords
                         logFile=0               ! Write to file or commandline(0)
         ! For OS calls
         character(250) :: command
@@ -162,6 +163,11 @@ module iolib
                 read(arg,'(I15)') write_frequency
                 iarg = iarg + 1 ! Next argument is not a flag
             endif
+            if (trim(arg) == '-pulling_freq') then ! Next input is write frequency
+                call get_command_argument(iarg+1,arg)
+                read(arg,'(I15)') pulling_write_frequency
+                iarg = iarg + 1 ! Next argument is not a flag
+            endif
             if (trim(arg) == '-cfreq') then ! Next input is checkpoint frequency
                 call get_command_argument(iarg+1,arg)
                 read(arg,'(I15)') checkpoint_frequency
@@ -261,13 +267,27 @@ module iolib
             else
                 open(unit=77,file='lg.txt',status='new')
             endif
+            inquire(file='pulling_lg.txt',exist=exists)
+            if (exists) then
+                open(unit=77,file='pulling_lg.txt',status='old',position='append')
+            else
+                open(unit=77,file='pulling_lg.txt',status='new')
+            endif
+            inquire(file=trim(pulling_trajFile),exist=exists)
+            if (exists) then
+                open(unit=pulling_trajFID,file=trim(pulling_trajFile),status='old',position='append')
+            else
+                open(unit=pulling_trajFID,file=trim(pulling_trajFile),status='new')
+            endif
         else
             ! This is not a restart, if a traj file exists we want
             ! to replace it 
             open(unit=trajFID,file=trim(trajFile),status='replace')
+            open(unit=pulling_trajFID,file=trim(pulling_trajFile),status='replace')
             open(unit=77,file='lg.txt',status='replace')
         endif
         close(trajFID)
+        close(pulling_trajFID)
         close(77)
         ! Polymer files, restart and final configuration
         open(unit=polyFID,file=trim(confOutFile),status='replace')
@@ -525,6 +545,28 @@ module iolib
 
     end subroutine write_trajF
 
+
+    subroutine write_pulling_trajF(pos,force,aname)
+
+        ! Space to initiliaze variables used only here
+        implicit none
+        double precision, intent(in) :: pos(:,:), force(:,:)
+        character(3), intent(in) :: aname(:)
+        integer :: ib
+
+        ! Open the file for writing
+        open(unit=pulling_trajFID,file=trim(pulling_trajFile),position='append')
+        ! Write necessary comment lines for .xyz format
+        write(pulling_trajFID,*) nBeads
+        write(pulling_trajFID,'(A11)') 'Commentline'
+        ! Write coordinates
+        do ib = 1,nBeads
+            write(pulling_trajFID,'(A3,6F12.4)') aname(ib),pos(ib,x),pos(ib,y),pos(ib,z),force(ib,x),force(ib,y),force(ib,z) ! *** Dimensionality hardcoded
+        enddo
+        close(pulling_trajFID) ! Close the file again
+
+    end subroutine write_pulling_trajF
+
 !==========================================================================================
 ! Subroutine write_force(force) writes the current forces to the debug file.
 !==========================================================================================
@@ -602,6 +644,17 @@ module iolib
         close(77)
 
     end subroutine write_LGstatus
+
+    subroutine write_pulling_LGstatus()
+
+        implicit none
+
+        ! Write to file
+        open(unit=77,file='pulling_lg.txt',position='append')
+        write(77,'(I1)') LGstatus ! Save the state of the LG
+        close(77)
+
+    end subroutine write_pulling_LGstatus
 
 !==========================================================================================
 ! Subroutine write_com(pos) writes the position of the center of mass to com.txt, I used 

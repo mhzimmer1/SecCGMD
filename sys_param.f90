@@ -109,7 +109,8 @@ module sys_param
                 debugFID        = 14,   &
                 trajDFID        = 16,   &  
                 energyFID       = 17,   &  
-                analysisFID     = 15    ! These fileIDs are reserved. For
+                analysisFID     = 15,   &
+                pulling_trajFID = 18    ! These fileIDs are reserved. For
                 ! variable files called only once
                 ! I will only use the ID 77
     !****Connie LG opening parameters ****!

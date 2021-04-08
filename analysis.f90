@@ -13,8 +13,8 @@ module analysis
                 ! feneR2
     double precision, parameter :: integrateD2=100.0 ! TM beads at least 10 sigma from channel center
     double precision :: fixForce(NDIM)
-    integer(8) :: nfbin=20001, fhist(20001)
-    double precision :: bs=0.01d0, f0=-100.d0
+    integer(8) :: nfbin=18001, fhist(18001)
+    double precision :: bs=0.01d0, f0=-110.d0
 
     contains
 
@@ -112,17 +112,6 @@ subroutine peptide_status(r,pstat)
         double precision :: dr(NDIM), r2, ri2 ! for force calculation
         integer :: bi
 
-! *** ENERGY CALCULATION MOVED TO MAIN.f90 ***
-!                double precision :: energies(6) ! Used to write the energy out
-!                integer :: i ! Used to loop
-
-!       call calc_bondL(pos,bhist) ! Add bondL to histogram
-!                tgmd = mindist(pos(1:75,:),pos(78:153,:)) ! minimum distance between TatC and GFP
-!                comv = comvector(pos(1:75,:),pos(78:153,:)) ! Vector between center of mass, from tatC to GFP
-!                tolink = comvector(pos(1:75,:),pos(75:76,:)) ! Vector between TatC COM and the linker
-!                tatx = sum(pos(1:75,1))/75.d0 ! The average X coord of TatC                
-
-                ! Write what I want to analyze to the analysis file
         ftmp(:) = 0.d0; 
         dr(:) = pos(nForce,:) - pos(nForce-1,:); 
         r2 = sum(dr(:)**2);

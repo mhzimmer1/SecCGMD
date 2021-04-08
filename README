@@ -4,4 +4,5 @@ Sequence Files now contains:
     one extra column to define TM
 
 Changelog
+20191230: Added extra parameters that allow for a different writing rate pre and post translation
 20181023: Changed lateral gating to only evaluate the energy if the random number drawn could possible lead to changing conformation
